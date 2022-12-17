@@ -3,3 +3,5 @@ en: {}
 
 fr:
   01net_rss@toot.aquilenet.fr: https://www.01net.com/actualites/feed/
+  gameblog_rss@toot.aquilenet.fr: https://www.gameblog.fr/rssmap/rss_all.xml
+  lemondeinformatique_rss@toot.aquilenet.fr: https://www.lemondeinformatique.fr/flux-rss/thematique/toutes-les-actualites/rss.xml
