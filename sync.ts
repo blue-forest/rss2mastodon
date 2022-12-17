@@ -3,16 +3,16 @@ import { parseFeed } from "https://deno.land/x/rss/mod.ts"
 
 const feeds = parseYaml(await Deno.readTextFile("./feeds.yml")) as {
   [language: string]: {
-    [account: string]: {
-      url: string
-      token: string
-    }
+    [account: string]: string
   }
 }
 
 for (const [language, accounts] of Object.entries(feeds)) {
-  for (const [name, account] of Object.entries(accounts)) {
-    const response = await fetch(account.url)
+  for (const [account, url] of Object.entries(accounts)) {
+    const token = Deno.env.get(`TOKEN_${account.replace(/@|\./g, "_")}`)
+    console.log(`TOKEN_${account.replace(/@|\./g, "_")}`, token)
+    if (!token) continue
+    const response = await fetch(url)
     const xml = await response.text()
     const feed = await parseFeed(xml)
     for (const entry of feed.entries) {
@@ -20,7 +20,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${account.token}`,
+          Authorization: `Bearer ${Deno.env.get(`TOKEN_${account}`)}`,
         },
         body: JSON.stringify({
           status: `${entry.title?.value} ${entry.id}`,
@@ -28,7 +28,8 @@ for (const [language, accounts] of Object.entries(feeds)) {
           language: language,
         }),
       })
-      console.log(name, response.status)
+      console.log(account, response.status)
+      break
     }
   }
 }
