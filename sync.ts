@@ -21,8 +21,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
       }
 
       // Get feed
-      const feedResponse = await fetch(url, {
-      })
+      const feedResponse = await fetch(url)
       const feedXML = await feedResponse.arrayBuffer()
       const feedDecoder = new TextDecoder("iso-8859-1")
       const feedString = feedDecoder.decode(feedXML)
@@ -69,7 +68,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
           `statuses`,
           token,
           JSON.stringify({
-            status: `${entry.text} ${entry.url}`,
+            status: `${entry.text ? (entry.text + " ") : ""}${entry.url}`,
             visibility: "public",
             language: language,
           }),
