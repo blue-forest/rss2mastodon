@@ -19,4 +19,6 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
     - name: Run Deno
-      run: env & deno run --allow-all ./sync.ts
+      env:
+        TOKEN_01NET_RSS_TOOT_AQUILENET_FR: ${{ secrets.TOKEN_01NET_RSS_TOOT_AQUILENET_FR }}
+      run: deno run --allow-all ./sync.ts
