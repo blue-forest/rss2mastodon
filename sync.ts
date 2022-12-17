@@ -3,12 +3,15 @@ import { parseFeed } from "https://deno.land/x/rss/mod.ts"
 
 const feeds = parseYaml(await Deno.readTextFile("./feeds.yml")) as {
   [language: string]: {
-    [account: string]: string
+    [account: string]: {
+      url: string
+      encoding?: string
+    }
   }
 }
 
 for (const [language, accounts] of Object.entries(feeds)) {
-  for (const [account, url] of Object.entries(accounts)) {
+  for (const [account, options] of Object.entries(accounts)) {
     try {
       const [name, instance] = account.split("@")
 
@@ -21,10 +24,15 @@ for (const [language, accounts] of Object.entries(feeds)) {
       }
 
       // Get feed
-      const feedResponse = await fetch(url)
-      const feedXML = await feedResponse.arrayBuffer()
-      const feedDecoder = new TextDecoder("iso-8859-1")
-      const feedString = feedDecoder.decode(feedXML)
+      const feedResponse = await fetch(options.url)
+      let feedString: string
+      if (typeof options.encoding !== "undefined") {
+        const feedXML = await feedResponse.arrayBuffer()
+        const feedDecoder = new TextDecoder(options.encoding)
+        feedString = feedDecoder.decode(feedXML)
+      } else {
+        feedString = await feedResponse.text()
+      }
       const feedData = await parseFeed(feedString)
       let feed = feedData.entries.map(e => ({
         text: e.title?.value,
