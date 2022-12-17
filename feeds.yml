@@ -3,11 +3,11 @@ en:
   9to5linux_rss@mstdn.social: https://9to5linux.com/feed/atom
   cnn_rss@mstdn.social: http://rss.cnn.com/rss/edition.rss
   devcommunity_rss@mstdn.social: https://dev.to/feed/
+  engadget_rss@mstdn.social: https://www.engadget.com/rss.xml
+  gsmarea_rss@mstdn.social: https://www.gsmarena.com/rss-news-reviews.php3
   itsfoss_rss@mstdn.social: https://itsfoss.com/feed/
   makeuseof_rss@mstdn.social: https://www.makeuseof.com/feed/
   tomshardware_rss@mstdn.social: https://www.tomshardware.com/feeds/all
-  engadget_rss@mstdn.social: https://www.engadget.com/rss.xml
-  gsmarea_rss@mstdn.social: https://www.gsmarena.com/rss-news-reviews.php3
 
 fr:
   01net_rss@mstdn.social: https://www.01net.com/actualites/feed/
