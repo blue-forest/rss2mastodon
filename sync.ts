@@ -21,9 +21,13 @@ for (const [language, accounts] of Object.entries(feeds)) {
       }
 
       // Get feed
-      const feedResponse = await fetch(url)
-      const feedXML = await feedResponse.text()
-      let feed = (await parseFeed(feedXML)).entries.map(e => ({
+      const feedResponse = await fetch(url, {
+      })
+      const feedXML = await feedResponse.arrayBuffer()
+      const feedDecoder = new TextDecoder("iso-8859-1")
+      const feedString = feedDecoder.decode(feedXML)
+      const feedData = await parseFeed(feedString)
+      let feed = feedData.entries.map(e => ({
         text: e.title?.value,
         url: e.links[0].href,
       }))
@@ -57,6 +61,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
         }
       }
 
+      // Post statuses
       for (const entry of feed.reverse()) {
         const response = await request(
           instance,
@@ -69,7 +74,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
             language: language,
           }),
         )
-        console.log(account, entry.url, response.id)
+        console.log(account, entry, response.id)
       }
     } catch (error) {
       console.error("ERROR", account, error)
