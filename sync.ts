@@ -9,27 +9,54 @@ const feeds = parseYaml(await Deno.readTextFile("./feeds.yml")) as {
 
 for (const [language, accounts] of Object.entries(feeds)) {
   for (const [account, url] of Object.entries(accounts)) {
-    const token = Deno.env.get(`TOKEN_${account.replace(/@|\./g, "_")}`)
-    console.log(`TOKEN_${account.replace(/@|\./g, "_")}`, token)
+    const [name, instance] = account.split("@")
+    const token = Deno.env.get(
+      `TOKEN_${`${name}_${instance}`.replace(/\./g, "_")}`
+    )
     if (!token) continue
-    const response = await fetch(url)
-    const xml = await response.text()
-    const feed = await parseFeed(xml)
-    for (const entry of feed.entries) {
-      const response = await fetch("https://toot.aquilenet.fr/api/v1/statuses", {
+
+    // Get feed
+    const feedResponse = await fetch(url)
+    const feedXML = await feedResponse.text()
+    let feed = (await parseFeed(feedXML)).entries.map(e => ({
+      text: e.title?.value,
+      url: e.links[0].href,
+    }))
+
+    // Get user ID
+    const credentialsResponse = await fetch(
+      `https://${instance}/api/v1/accounts/verify_credentials`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    )
+    const { id } = await credentialsResponse.json()
+
+    // Get last status
+    const lastStatusResponse = await fetch(
+      `https://${instance}/api/v1/accounts/${id}/statuses?limit=1&exclude_replies=true&exclude_reblogs=true`,
+      { headers: { Authorization: `Bearer ${token}` } },
+    )
+    const [lastStatus] = await lastStatusResponse.json()
+
+    // Remove already posted statuses
+    if (lastStatus) {
+      const lastURLIndex = feed.findIndex(e => e.url === lastStatus.card.url)
+      if (lastURLIndex !== -1) feed = feed.slice(0, lastURLIndex)
+    }
+
+    for (const entry of feed.reverse()) {
+      const response = await fetch(`https://${instance}/api/v1/statuses`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${Deno.env.get(`TOKEN_${account}`)}`,
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify({
-          status: `${entry.title?.value} ${entry.id}`,
+          status: `${entry.text} ${entry.url}`,
           visibility: "public",
           language: language,
         }),
       })
-      console.log(account, response.status)
-      break
+      console.log(account, entry, response.status)
     }
   }
 }
