@@ -19,4 +19,4 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
     - name: Run Deno
-      run: deno run --allow-all ./sync.ts
+      run: env & deno run --allow-all ./sync.ts

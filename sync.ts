@@ -10,10 +10,12 @@ const feeds = parseYaml(await Deno.readTextFile("./feeds.yml")) as {
 for (const [language, accounts] of Object.entries(feeds)) {
   for (const [account, url] of Object.entries(accounts)) {
     const [name, instance] = account.split("@")
-    const token = Deno.env.get(
-      `TOKEN_${`${name}_${instance}`.replace(/\./g, "_")}`
-    )
-    if (!token) continue
+    const envName = `TOKEN_${`${name}_${instance}`.replace(/\./g, "_").toUpperCase()}`
+    const token = Deno.env.get(envName)
+    if (!token) {
+      console.log(`No token for ${account} from ${envName}`)
+      continue
+    }
 
     // Get feed
     const feedResponse = await fetch(url)
