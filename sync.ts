@@ -1,5 +1,6 @@
 import { parse as parseYaml } from "https://deno.land/std/encoding/yaml.ts"
 import { parseFeed } from "https://deno.land/x/rss/mod.ts"
+import * as utils from "./utils.ts"
 
 const feeds = parseYaml(await Deno.readTextFile("./feeds.yml")) as {
   [language: string]: {
@@ -40,7 +41,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
       }))
 
       // Get user ID
-      const { id } = await request(
+      const { id } = await utils.request(
         instance,
         "GET",
         `accounts/verify_credentials`,
@@ -48,7 +49,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
       )
 
       // Get last status
-      const [lastStatus] = await request(
+      const [lastStatus] = await utils.request(
         instance,
         "GET",
         `accounts/${id}/statuses?limit=1&exclude_replies=true&exclude_reblogs=true`,
@@ -70,7 +71,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
           } else {
             currentURL = lastStatus.card.url
           }
-          const redirectedURL = await getRedirectedURL(entry.url)
+          const redirectedURL = await utils.getRedirectedURL(entry.url)
           if (currentURL.startsWith(redirectedURL)) {
             feed = feed.slice(0, i)
             break
@@ -80,13 +81,13 @@ for (const [language, accounts] of Object.entries(feeds)) {
 
       // Post statuses
       for (const entry of feed.reverse()) {
-        const response = await request(
+        const response = await utils.request(
           instance,
           "POST",
           `statuses`,
           token,
           JSON.stringify({
-            status: `${entry.text ? (decodeEntities(entry.text) + " ") : ""}${entry.url}`,
+            status: `${entry.text ? (utils.decodeEntities(entry.text) + " ") : ""}${entry.url}`,
             visibility: "public",
             language: language,
           }),
@@ -98,47 +99,3 @@ for (const [language, accounts] of Object.entries(feeds)) {
     }
   }
 }
-
-async function getRedirectedURL(url: string) {
-  const response = await fetch(url, { method: "HEAD" })
-  return response.url
-}
-
-async function request(instance: string, method: string, path: string, token: string, body?: string) {
-  const response = await fetch(`https://${instance}/api/v1/${path}`, {
-    method,
-    headers: {
-      "Content-Type": "application/json",
-      Authorization: `Bearer ${token}`,
-    },
-    body,
-  })
-  return response.json()
-}
-
-const entitiesRegex = /&(nbsp|amp|quot|lt|gt|euro);/g
-
-const entitiesConversions: { [input: string]: string } = {
-  "nbsp": " ",
-  "amp": "&",
-  "quot": "\"",
-  "lt": "<",
-  "gt": ">",
-  "euro": "€",
-}
-
-function decodeEntities(encodedString: string): string {
-  return encodedString
-    .replace(entitiesRegex, (_, entity: string) => {
-      return entitiesConversions[entity]
-    })
-    .replace(/&#(\d+);/gi, (_, numStr) => {
-      return String.fromCharCode(parseInt(numStr, 10))
-    })
-}
-
-/*
-[NOTES FOR THE AUTHORS] Token acquisition process (cannot be automated yet):
-  1. https://mstdn.social/oauth/authorize?response_type=code&client_id=MAE02t6-yRbu1ArvaZaPiTDaUWLuZojFKjQDh2tFCb0&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=read:accounts+read:statuses+write:statuses
-  2. curl -X POST "https://mstdn.social/oauth/token?grant_type=authorization_code&code=$CODE&client_id=MAE02t6-yRbu1ArvaZaPiTDaUWLuZojFKjQDh2tFCb0&client_secret=$SECRET&redirect_uri=urn:ietf:wg:oauth:2.0:oob&scope=read:accounts+read:statuses+write:statuses"
-*/
