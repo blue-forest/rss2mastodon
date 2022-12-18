@@ -86,7 +86,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
           `statuses`,
           token,
           JSON.stringify({
-            status: `${entry.text ? (entry.text + " ") : ""}${entry.url}`,
+            status: `${entry.text ? (decodeEntities(entry.text) + " ") : ""}${entry.url}`,
             visibility: "public",
             language: language,
           }),
@@ -114,6 +114,27 @@ async function request(instance: string, method: string, path: string, token: st
     body,
   })
   return response.json()
+}
+
+const entitiesRegex = /&(nbsp|amp|quot|lt|gt|euro);/g
+
+const entitiesConversions: { [input: string]: string } = {
+  "nbsp": " ",
+  "amp": "&",
+  "quot": "\"",
+  "lt": "<",
+  "gt": ">",
+  "euro": "€",
+}
+
+function decodeEntities(encodedString: string): string {
+  return encodedString
+    .replace(entitiesRegex, (_, entity: string) => {
+      return entitiesConversions[entity]
+    })
+    .replace(/&#(\d+);/gi, (_, numStr) => {
+      return String.fromCharCode(parseInt(numStr, 10))
+    })
 }
 
 /*
