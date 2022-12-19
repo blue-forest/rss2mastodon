@@ -4,7 +4,7 @@ export async function getRedirectedURL(url: string) {
   return response.url
 }
 
-export async function request(instance: string, method: string, path: string, token: string, body?: string) {
+export async function request<Output = any>(instance: string, method: string, path: string, token: string, body?: string): Promise<Output> {
   const response = await fetch(`https://${instance}/api/v1/${path}`, {
     method,
     headers: {
