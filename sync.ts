@@ -88,8 +88,8 @@ for (const [language, accounts] of Object.entries(feeds)) {
       // Post statuses
       for (const entry of feed.reverse()) {
         if (!entry.url) continue
-        entry.url = await utils.getRedirectedURL(entry.url)
-        if (!entry.url) continue
+        //entry.url = await utils.getRedirectedURL(entry.url) // Not needed anymore
+        //if (!entry.url) continue
         if (database.exists(entry.url)) continue
         /*const response = await utils.request<Status>(
           instance,
