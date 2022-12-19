@@ -1,6 +1,8 @@
 import { parse as parseYaml } from "https://deno.land/std/encoding/yaml.ts"
 import { parseFeed } from "https://deno.land/x/rss/mod.ts"
 import * as utils from "./utils.ts"
+import DB from "./db.ts"
+import { Status } from "./types.ts"
 
 const feeds = parseYaml(await Deno.readTextFile("./feeds.yml")) as {
   [language: string]: {
@@ -10,6 +12,8 @@ const feeds = parseYaml(await Deno.readTextFile("./feeds.yml")) as {
     }
   }
 }
+
+const database = DB()
 
 for (const [language, accounts] of Object.entries(feeds)) {
   for (const [account, options] of Object.entries(accounts)) {
@@ -37,29 +41,29 @@ for (const [language, accounts] of Object.entries(feeds)) {
         feedString = await feedResponse.text()
       }
       const feedData = await parseFeed(feedString)
-      let feed = feedData.entries.map(e => ({
+      const feed = feedData.entries.map(e => ({
         text: e.title?.value,
         url: e.links[0].href,
       }))
 
-      // Get user ID
-      const { id } = await utils.request(
+      // Get user ID (not used anymore)
+      /*const { id } = await utils.request(
         instance,
         "GET",
         `accounts/verify_credentials`,
         token,
-      )
+      )*/
 
-      // Get last status
-      const [lastStatus] = await utils.request(
+      // Get last status (not used anymore)
+      /*const [lastStatus] = await utils.request(
         instance,
         "GET",
         `accounts/${id}/statuses?limit=1&exclude_replies=true&exclude_reblogs=true`,
         token,
-      )
+      )*/
 
-      // Remove already posted statuses
-      if (lastStatus) {
+      // Remove already posted statuses (not used anymore)
+      /*if (lastStatus) {
         for (let i = 0; i < feed.length; i++) {
           const entry = feed[i]
           if (!entry.url) continue
@@ -79,11 +83,14 @@ for (const [language, accounts] of Object.entries(feeds)) {
             break
           }
         }
-      }
+      }*/
 
       // Post statuses
       for (const entry of feed.reverse()) {
-        const response = await utils.request(
+        if (!entry.url) continue
+        entry.url = await utils.getRedirectedURL(entry.url)
+        if (database.exists(entry.url)) continue
+        const response = await utils.request<Status>(
           instance,
           "POST",
           `statuses`,
@@ -95,9 +102,12 @@ for (const [language, accounts] of Object.entries(feeds)) {
           }),
         )
         console.log("[POST]", account, entry, response.id)
+        database.add(entry.url, account, response.id)
       }
     } catch (error) {
       console.error("[ERROR]", account, error)
     }
   }
 }
+
+database.close()
