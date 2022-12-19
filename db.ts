@@ -13,7 +13,8 @@ export default function () {
     )
   `)
 
-  console.log("CONTENT", db.query("SELECT * FROM posts"))
+  const posts = db.query("SELECT * FROM posts")
+  console.log("CONTENT", posts.length, JSON.stringify(posts))
 
   return {
     exists: (url: string) => {
