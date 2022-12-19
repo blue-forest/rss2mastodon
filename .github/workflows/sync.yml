@@ -26,7 +26,7 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
 
-    - name: Database cache
+    - name: Load database cache
       uses: actions/cache@v3
       with:
         key: database
@@ -35,3 +35,20 @@ jobs:
     - name: Run Deno
       env: ${{ secrets }}
       run: deno run --allow-all ./sync.ts
+
+    - name: Remove cache
+      if: always()
+      continue-on-error: true
+      run: |
+        curl \
+          -X DELETE \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}"\
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/actions/caches?key=database
+
+    - name: Save cache
+      uses: actions/cache@v3
+      with:
+        key: database
+        path: data.sqlite
