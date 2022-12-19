@@ -13,6 +13,8 @@ export default function () {
     )
   `)
 
+  console.log("CONTENT", db.query("SELECT * FROM posts"))
+
   return {
     exists: (url: string) => {
       return db.query(

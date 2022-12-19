@@ -2,8 +2,6 @@ name: Sync
 
 on:
   workflow_dispatch:
-  #push:
-  #  branches: ["master"]
   schedule:
   - cron: "*/10 * * * *"
 
@@ -17,16 +15,16 @@ jobs:
     - name: Repository
       uses: actions/checkout@v3
 
-    - name: Setup Deno
-      uses: denoland/setup-deno@v1
-
     - name: Demo cache
       uses: actions/cache@v3
       with:
+        key: deno
         path: |
           ~/.deno
           ~/.cache/deno
-        key: deno
+
+    - name: Setup Deno
+      uses: denoland/setup-deno@v1
 
     - name: Database cache
       uses: actions/cache@v3
