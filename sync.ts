@@ -102,8 +102,8 @@ for (const [language, accounts] of Object.entries(feeds)) {
             language,
           }),
         )*/
-        console.log("[POST]", account, entry, "test")
-        database.add(entry.url, account, "test")
+        console.log("[POST]", account, entry)
+        //database.add(entry.url, account, response.id)
       }
     } catch (error) {
       console.error("[ERROR]", account, error)
