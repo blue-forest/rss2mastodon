@@ -5,16 +5,14 @@ export default function () {
 
   db.execute(`
     CREATE TABLE IF NOT EXISTS posts (
-      url TEXT PRIMARY KEY,
+      url TEXT NOT NULL,
       account TEXT NOT NULL,
       post TEXT NOT NULL,
-      date NUMERIC NOT NULL,
-      UNIQUE (url, account)
+      date NUMERIC NOT NULL
     )
   `)
 
-  const posts = db.query("SELECT * FROM posts")
-  console.log("CONTENT", posts.length, JSON.stringify(posts))
+  console.log("Items before:", db.query("SELECT * FROM posts").length)
 
   return {
     exists: (url: string) => {
@@ -29,6 +27,9 @@ export default function () {
         { url, account, post, date: Date.now() },
       )
     },
-    close: () => db.close(),
+    close: () => {
+      console.log("Items after:", db.query("SELECT * FROM posts").length)
+      db.close()
+    },
   }
 }
