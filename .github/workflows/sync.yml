@@ -1,4 +1,4 @@
-name: Check
+name: Sync
 
 on:
   workflow_dispatch:
@@ -20,7 +20,15 @@ jobs:
     - name: Setup Deno
       uses: denoland/setup-deno@v1
 
-    - name: Load DB cache
+    - name: Demo cache
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.deno
+          ~/.cache/deno
+        key: deno-${{ runner.os }}-${{ hashFiles('**/deps.ts') }}
+
+    - name: Database cache
       uses: actions/cache@v3
       with:
         key: database
@@ -29,9 +37,3 @@ jobs:
     - name: Run Deno
       env: ${{ secrets }}
       run: deno run --allow-all ./sync.ts
-
-    - name: Upload DB cache
-      uses: actions/cache@v3
-      with:
-        key: database
-        path: data.sqlite
