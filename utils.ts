@@ -1,7 +1,11 @@
 
 export async function getRedirectedURL(url: string) {
-  const response = await fetch(url, { method: "HEAD" })
-  return response.url
+  try {
+    const response = await fetch(url, { method: "HEAD" })
+    return response.url
+  } catch (e) {
+    console.warn(`[WARNING] Could not get redirected URL for ${url}`)
+  }
 }
 
 export async function request<Output = any>(instance: string, method: string, path: string, token: string, body?: string): Promise<Output> {

@@ -89,8 +89,9 @@ for (const [language, accounts] of Object.entries(feeds)) {
       for (const entry of feed.reverse()) {
         if (!entry.url) continue
         entry.url = await utils.getRedirectedURL(entry.url)
+        if (!entry.url) continue
         if (database.exists(entry.url)) continue
-        const response = await utils.request<Status>(
+        /*const response = await utils.request<Status>(
           instance,
           "POST",
           `statuses`,
@@ -100,9 +101,9 @@ for (const [language, accounts] of Object.entries(feeds)) {
             visibility: "public",
             language,
           }),
-        )
-        console.log("[POST]", account, entry, response.id)
-        database.add(entry.url, account, response.id)
+        )*/
+        console.log("[POST]", account, entry, "test")
+        database.add(entry.url, account, "test")
       }
     } catch (error) {
       console.error("[ERROR]", account, error)
