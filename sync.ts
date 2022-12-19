@@ -20,9 +20,11 @@ for (const [language, accounts] of Object.entries(feeds)) {
       const envName = `TOKEN_${`${name}_${instance}`.replace(/\./g, "_").toUpperCase()}`
       const token = Deno.env.get(envName)
       if (!token) {
-        console.log(`No token for ${account} from ${envName}`)
+        console.warn(`[WARNING] No token for ${account}, skipping`)
         continue
       }
+
+      console.log("[ACCOUNT] Syncing", account, "...")
 
       // Get feed
       const feedResponse = await fetch(options.url)
@@ -62,14 +64,14 @@ for (const [language, accounts] of Object.entries(feeds)) {
           const entry = feed[i]
           if (!entry.url) continue
           let currentURL: string
-          if (!lastStatus.card) {
+          if (lastStatus.card) {
+            currentURL = lastStatus.card.url
+          } else {
             const url = lastStatus.content.match(/<a href="([^"]+)"/)
             if (!url) {
               throw new Error(`No card and no URL in status ${lastStatus.id}`)
             }
             currentURL = url[1]
-          } else {
-            currentURL = lastStatus.card.url
           }
           const redirectedURL = await utils.getRedirectedURL(entry.url)
           if (currentURL.startsWith(redirectedURL)) {
@@ -89,13 +91,13 @@ for (const [language, accounts] of Object.entries(feeds)) {
           JSON.stringify({
             status: `${entry.text ? (utils.decodeEntities(entry.text) + " ") : ""}${entry.url}`,
             visibility: "public",
-            language: language,
+            language,
           }),
         )
-        console.log(account, entry, response.id)
+        console.log("[POST]", account, entry, response.id)
       }
     } catch (error) {
-      console.error("ERROR", account, error)
+      console.error("[ERROR]", account, error)
     }
   }
 }

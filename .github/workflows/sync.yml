@@ -5,14 +5,13 @@ on:
   push:
     branches: ["master"]
   schedule:
-  #- cron: "*/30 * * * *"
-  - cron: "0 * * * *"
+  - cron: "*/20 * * * *"
 
 permissions:
   contents: read
 
 jobs:
-  run:
+  sync:
     runs-on: ubuntu-latest
     steps:
     - name: Repository
