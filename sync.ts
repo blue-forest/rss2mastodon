@@ -91,7 +91,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
         //entry.url = await utils.getRedirectedURL(entry.url) // Not needed anymore
         //if (!entry.url) continue
         if (database.exists(entry.url)) continue
-        /*const response = await utils.request<Status>(
+        const response = await utils.request<Status>(
           instance,
           "POST",
           `statuses`,
@@ -101,9 +101,9 @@ for (const [language, accounts] of Object.entries(feeds)) {
             visibility: "public",
             language,
           }),
-        )*/
+        )
         console.log("[POST]", account, entry)
-        database.add(entry.url, account, "skipped")//response.id)
+        database.add(entry.url, account, response.id)
       }
     } catch (error) {
       console.error("[ERROR]", account, error)
