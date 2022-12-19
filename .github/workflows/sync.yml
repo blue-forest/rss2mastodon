@@ -2,8 +2,8 @@ name: Check
 
 on:
   workflow_dispatch:
-  push:
-    branches: ["master"]
+  #push:
+  #  branches: ["master"]
   schedule:
   - cron: "*/10 * * * *"
 

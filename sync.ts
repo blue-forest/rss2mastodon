@@ -103,7 +103,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
           }),
         )*/
         console.log("[POST]", account, entry)
-        //database.add(entry.url, account, response.id)
+        database.add(entry.url, account, "skipped")//response.id)
       }
     } catch (error) {
       console.error("[ERROR]", account, error)
