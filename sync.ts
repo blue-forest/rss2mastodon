@@ -98,7 +98,7 @@ for (const [language, accounts] of Object.entries(feeds)) {
           token,
           JSON.stringify({
             status: `${entry.text ? (utils.decodeEntities(entry.text) + " ") : ""}${entry.url}`,
-            visibility: "public",
+            visibility: "unlisted", //"public", // imposed by mstdn.social
             language,
           }),
         )
