@@ -1,15 +1,11 @@
 
 en:
-  9to5linux_rss@mstdn.social:
-    url: https://9to5linux.com/feed/atom
   cnn_rss@mstdn.social:
     url: http://rss.cnn.com/rss/edition.rss
   devcommunity_rss@mstdn.social:
     url: https://dev.to/feed/
   engadget_rss@mstdn.social:
     url: https://www.engadget.com/rss.xml
-  gsmarena_rss@mstdn.social:
-    url: https://www.gsmarena.com/rss-news-reviews.php3
   itsfoss_rss@mstdn.social:
     url: https://itsfoss.com/feed/
   makeuseof_rss@mstdn.social:
@@ -18,44 +14,7 @@ en:
     url: https://www.tomshardware.com/feeds/all
 
 fr:
-  01net_rss@mstdn.social:
-    url: https://www.01net.com/actualites/feed/
-  allocine_rss@mstdn.social:
-    url: https://www.allocine.fr/rss/news.xml
-  blogdumoderateur_rss@mstdn.social:
-    url: https://www.blogdumoderateur.com/feed/
-  clubic_rss@mstdn.social:
-    url: https://www.clubic.com/feed/news.rss
-  cointribune_rss@mstdn.social:
-    url: https://www.cointribune.com/feed/
-  cowcotland_rss@mstdn.social:
-    url: https://feeds.feedburner.com/cowcotland
-  cryptoast_rss@mstdn.social:
-    url: https://cryptoast.fr/feed/
-  developpez_rss@mstdn.social:
-    url: https://web.developpez.com/index/atom
-  ecranlarge_rss@mstdn.social:
-    url: https://www.ecranlarge.com/rss
-  frandroid_rss@mstdn.social:
-    url: https://www.frandroid.com/feed
   gameblog_rss@mstdn.social:
     url: https://www.gameblog.fr/rssmap/rss_all.xml
-  journalducoin_rss@mstdn.social:
-    url: https://journalducoin.com/feed/
-  jvc_rss@mstdn.social:
-    url: https://www.jeuxvideo.com/rss/rss-news.xml
-  lemondeinformatique_rss@mstdn.social:
-    url: https://www.lemondeinformatique.fr/flux-rss/thematique/toutes-les-actualites/rss.xml
-    encoding: iso-8859-1
-  lesjoiesducode_rss@mstdn.social:
-    url: https://lesjoiesducode.fr/feed
-  lesnumeriques_rss@mstdn.social:
-    url: https://www.lesnumeriques.com/rss.xml
-  numerama_rss@mstdn.social:
-    url: https://www.numerama.com/feed
-  phonandroid_rss@mstdn.social:
-    url: https://www.phonandroid.com/feed
-  telerama_ecrans_rss@mstdn.social:
-    url: https://www.telerama.fr/rss/ecrans.xml
   zdnet_rss@mstdn.social:
     url: https://www.zdnet.fr/feeds/rss/actualites/
